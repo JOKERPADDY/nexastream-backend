@@ -1,11 +1,17 @@
 import { extract as extractStreamWish } from './src/extractors/streamWishExtractor.js';
+import { extract as extractVixSrc } from './src/extractors/vixSrcExtractor.js';
 
 const ALLOWED_HOSTS = [
   'streamwish.to',
   'streamwish.com',
   'wishfast.top',
   'embedwish.com',
-  'awish.tokyo'
+  'awish.tokyo',
+  'vixsrc.to',
+  'blackpuma78.boats',
+  'filemoon.sx',
+  'filemoon.site',
+  'rabbitstream.net'
 ];
 
 function isPrivateIP(hostname) {
@@ -44,7 +50,8 @@ export default {
       return Response.json({
         version: '1.0.0',
         providers: [
-          { id: 'streamwish', name: 'StreamWish', status: 'active' }
+          { id: 'streamwish', name: 'StreamWish', status: 'active' },
+          { id: 'vixsrc', name: 'VixSrc', status: 'active' }
         ]
       }, { headers: corsHeaders });
     }
@@ -58,10 +65,6 @@ export default {
           return Response.json({ error: 'Missing required parameters: provider and url' }, { status: 400, headers: corsHeaders });
         }
 
-        if (provider !== 'streamwish') {
-          return Response.json({ error: `Unsupported provider: ${provider}` }, { status: 400, headers: corsHeaders });
-        }
-
         const parsedUrl = new URL(targetUrl);
         const hostname = parsedUrl.hostname.toLowerCase();
 
@@ -73,7 +76,14 @@ export default {
 
         console.log(`Resolving stream for provider [${provider}] with URL: ${targetUrl}`);
 
-        const streamInfo = await extractStreamWish(targetUrl);
+        let streamInfo = null;
+        if (provider === 'streamwish') {
+          streamInfo = await extractStreamWish(targetUrl);
+        } else if (provider === 'vixsrc') {
+          streamInfo = await extractVixSrc(targetUrl);
+        } else {
+          return Response.json({ error: `Unsupported provider: ${provider}` }, { status: 400, headers: corsHeaders });
+        }
 
         return Response.json({
           success: true,
