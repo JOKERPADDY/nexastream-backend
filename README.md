@@ -1,13 +1,15 @@
-# NexaStream Centralized Backend
+# NexaStream Cloudflare Worker Backend
 
 ## Overview
-Node.js / Express backend service for NexaStream 2 stream extraction, configured for deployment on **Render's free tier**.
+Cloudflare Worker backend service for NexaStream 2 stream extraction running at the edge with zero cold starts.
 
-## Deployment on Render
-1. Create a new **Web Service** on Render and connect this repository (`New folder (13)`).
-2. Set Build Command: `npm install`
-3. Set Start Command: `npm start`
-4. Select the **Free** instance type.
+## Local Development
+1. Install dependencies: `npm install`
+2. Run locally: `npm run dev`
+
+## Deployment to Cloudflare Workers
+1. Login to Wrangler: `npx wrangler login`
+2. Deploy: `npm run deploy`
 
 ## API Endpoints
 - `GET /health` - Health check
